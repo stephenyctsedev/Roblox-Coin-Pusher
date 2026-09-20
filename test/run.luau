@@ -3,6 +3,7 @@ local Harness = require("./harness")
 
 local specs = {
 	{ name = "harness", run = require("./harness.spec") },
+	{ name = "Cooldown", run = require("./Cooldown.spec") },
 }
 
 local t = Harness.new()
