@@ -1,0 +1,7 @@
+build/
+*.rbxl
+*.rbxlx
+*.rbxl.lock
+*.rbxm
+Packages/
+.claude/
