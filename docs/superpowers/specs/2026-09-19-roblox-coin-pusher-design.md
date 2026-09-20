@@ -1,7 +1,7 @@
 # Roblox Coin Pusher: Design
 
 Date: 2026-09-19
-Status: design approved in chat; spec pending owner review. Not committed.
+Status: approved by the owner 2026-09-19; refined while writing the implementation plan.
 
 ## Purpose
 
@@ -43,7 +43,7 @@ RobloxCoinPusher/
   docs/superpowers/specs/   this file
   src/
     shared/
-      Config.luau           all tuning values
+      Config.luau           all tuning values, plain numbers only so Lune can load it
       rules/                pure logic, no Roblox APIs (testable under Lune)
         Cooldown.luau
         Payout.luau
@@ -61,6 +61,8 @@ RobloxCoinPusher/
       RewardService.luau
       DataService.luau
       Telemetry.luau
+      PlayerState.luau      per-player coins, score, leaderstats, regen
+      DropService.luau      validates DropCoin requests
     client/
       InputController.client.luau
       Hud.client.luau
@@ -76,17 +78,17 @@ RobloxCoinPusher/
 | Cooldown | `Cooldown.new(seconds)`, `:tryUse(id, now) -> boolean`, `:reset(id)` | Server-side drop rate limit per player |
 | Payout | `canDrop(balance)`, `afterDrop(balance)`, `forReward(config) -> {bonusCoins, scoreDelta}` | Balance and reward maths |
 | Regen | `apply(balance, elapsedSeconds, config) -> newBalance, leftoverSeconds` | 1 coin every N seconds up to a cap |
-| SaveData | `new()`, `validate(raw) -> data or nil, err`, `migrate(raw)` | Shape `{version=1, coins, score}`, non-negative integers, safe defaults |
+| SaveData | `new(startingCoins)`, `validate(raw) -> data or nil, err`, `migrate(raw)`, `resolve(raw, startingCoins) -> {data, status}` | Shape `{version=1, coins, score}`, non-negative integers. `resolve` returns status `new`, `loaded` or `invalid` with safe defaults |
 | ConfigValidation | `validate(config) -> ok, errors` | Catches bad tuning values at startup |
-| DropZone | `clamp(x, halfWidth) -> x` | Keeps a requested drop position on the machine |
+| DropZone | `clamp(x, halfWidth) -> x`, `sanitize(x, halfWidth) -> x or nil` | Keeps a requested drop position on the machine; rejects non-numbers, NaN and infinity |
 | PusherMath | `positionAt(t, stroke, speed) -> offset` | Back-and-forth motion, deterministic |
-| CapQueue | `push(list, item, cap) -> evicted or nil` | Oldest coin is evicted past the cap |
+| CapQueue | `push(list, item, cap) -> evicted or nil`, `remove(list, item) -> boolean` | Oldest coin is evicted past the cap; paid coins are removed from the list |
 
 Everything with Roblox APIs (services, builder, HUD) is verified by playtest, not unit tests.
 
 ## Config (initial values, tuned in Studio)
 
-`startingCoins = 20`, `regenIntervalSeconds = 5`, `regenCap = 20`, `dropCooldownSeconds = 0.5`, `rewardBonusCoins = 3`, `coinsOnMachineCap = 150`, `pusherSpeed = 4` studs per second, `pusherStroke = 6` studs, plus machine dimensions (platform width and depth, wall height, coin size). Exact machine dimensions are set in the implementation plan.
+`startingCoins = 20`, `regenIntervalSeconds = 5`, `regenCap = 20`, `dropCooldownSeconds = 0.5`, `rewardBonusCoins = 3`, `coinsOnMachineCap = 150`, `pusherSpeed = 4` studs per second, `pusherStroke = 6` studs, plus machine dimensions (platform width and depth, wall height, coin size). The machine dimensions are in `Config.machine` (see the plan). Every value in `Config` is a plain number so the shipped config can be validated by a Lune test.
 
 ## Gameplay and data flow
 
@@ -107,7 +109,7 @@ First implementation: an anchored part driven by the server each step from `Push
 ## Persistence
 
 - DataStore `PlayerData_v1`, key `Player_<UserId>`.
-- Load with 3 attempts and backoff (1, 2, 4 seconds). If loading fails, use defaults, mark the profile `loaded = false`, and never save it, so a failed load can't wipe real progress. Logged as `load_failed`.
+- Load with 3 attempts and a 1 then 2 second backoff between attempts. If loading fails, use defaults, mark the profile `loaded = false`, and never save it, so a failed load can't wipe real progress. Logged as `load_failed`.
 - Save on leave, on server shutdown (`BindToClose`), and every 60 seconds.
 - If DataStore access is unavailable (Studio without API access enabled), fall back to an in-memory store and log clearly that progress will not persist.
 - Known limitation: no session locking across servers.
@@ -136,4 +138,4 @@ The owner opens Studio with Rojo connected, checks Game Settings (enable Studio 
 1. Pusher physics feel and stability need tuning in Studio.
 2. DataStore behaviour needs Studio API access and a published place.
 3. The implementer cannot see the game; the playtest checklist is how problems are found.
-4. Exact machine dimensions are decided in the implementation plan.
+4. The machine geometry (a low pusher slab that shoves flat coins with its front face) is untested until Studio playtest; the numbers in `Config.machine` are the first guess.
