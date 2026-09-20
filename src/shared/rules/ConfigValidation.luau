@@ -86,13 +86,14 @@ function ConfigValidation.validate(config: any): (boolean, { string })
 			if machine.originY <= machine.baseThickness / 2 then
 				table.insert(errors, "machine.originY: must be above half the base thickness so the stand has height")
 			end
-			if machine.pusherDepth + config.pusherStroke > machine.platformDepth then
-				table.insert(errors, "machine.pusherDepth + pusherStroke: must not exceed machine.platformDepth")
+			if machine.pusherDepth >= machine.platformDepth then
+				table.insert(errors, "machine.pusherDepth: must be smaller than machine.platformDepth")
 			end
 			if math.abs(machine.dropZ) >= machine.platformDepth / 2 then
 				table.insert(errors, "machine.dropZ: must sit inside the platform depth")
 			end
-			if machine.seedStartZ - machine.coinDiameter / 2 < -machine.platformDepth / 2 + machine.pusherDepth then
+			local retractedFrontZ = -machine.platformDepth / 2 - config.pusherStroke + machine.pusherDepth
+			if machine.seedStartZ - machine.coinDiameter / 2 < retractedFrontZ then
 				table.insert(errors, "machine.seedStartZ: must sit in front of the retracted pusher")
 			end
 			if machine.seedStartZ >= machine.platformDepth / 2 - machine.seedEndMargin then

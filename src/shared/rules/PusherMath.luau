@@ -11,4 +11,11 @@ function PusherMath.positionAt(t: number, stroke: number, speed: number): number
 	return 2 * stroke - distance
 end
 
+-- Z of the slab centre when fully retracted, relative to the base centre. The slab is placed
+-- so that its rear edge is exactly at the back wall when fully extended, so the base behind
+-- it is never exposed. Front edge when retracted = this + pusherDepth / 2.
+function PusherMath.retractedCenterZ(platformDepth: number, pusherDepth: number, stroke: number): number
+	return -platformDepth / 2 - stroke + pusherDepth / 2
+end
+
 return PusherMath

@@ -6,7 +6,7 @@ local function machine()
 		platformWidth = 20,
 		platformDepth = 24,
 		coinDiameter = 2,
-		seedStartZ = 1.5,
+		seedStartZ = 0.5,
 		seedEndMargin = 1.5,
 		seedGapFactor = 1.02,
 	}

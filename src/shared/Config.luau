@@ -17,14 +17,14 @@ return {
 		platformDepth = 24, -- Z, coins are pushed toward +Z
 		baseThickness = 1,
 		wallHeight = 4,
-		pusherDepth = 6, -- Z length of the pusher slab
+		pusherDepth = 12, -- Z length of the pusher slab; its rear stays flush with the back wall
 		pusherHeight = 1, -- slab sits on the base
 		coinDiameter = 2,
 		coinThickness = 0.4,
 		dropHeight = 8, -- coins spawn this far above the base top
 		dropZ = -4.5, -- Z where coins spawn, relative to the base centre
 		rewardZoneDepth = 6, -- Z length of the sensor beyond the front edge
-		seedStartZ = 1.5, -- first row of pre-filled coins, relative to the base centre
+		seedStartZ = 0.5, -- first row of pre-filled coins; the full stroke reaches 0, so it nudges this row
 		seedEndMargin = 1.5, -- empty strip left before the front edge
 		seedGapFactor = 1.02, -- spacing between pre-filled coins as a multiple of the coin diameter
 	},

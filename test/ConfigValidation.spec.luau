@@ -20,14 +20,14 @@ local function validConfig()
 			platformDepth = 24,
 			baseThickness = 1,
 			wallHeight = 4,
-			pusherDepth = 6,
+			pusherDepth = 12,
 			pusherHeight = 1,
 			coinDiameter = 2,
 			coinThickness = 0.4,
 			dropHeight = 8,
 			dropZ = -4.5,
 			rewardZoneDepth = 6,
-			seedStartZ = 1.5,
+			seedStartZ = 0.5,
 			seedEndMargin = 1.5,
 			seedGapFactor = 1.02,
 		},
@@ -118,12 +118,12 @@ return function(t)
 		t:eq(hasError(errors, "machine.originX"), true)
 	end)
 
-	t:test("ConfigValidation: the pusher must fit inside the platform", function()
+	t:test("ConfigValidation: the pusher must be shallower than the platform", function()
 		local config = validConfig()
-		config.pusherStroke = 20
+		config.machine.pusherDepth = 30
 		local ok, errors = ConfigValidation.validate(config)
 		t:eq(ok, false)
-		t:eq(hasError(errors, "pusherDepth + pusherStroke"), true)
+		t:eq(hasError(errors, "machine.pusherDepth"), true)
 	end)
 
 	t:test("ConfigValidation: the drop point must sit on the platform", function()

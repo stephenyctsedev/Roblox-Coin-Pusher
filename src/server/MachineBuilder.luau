@@ -1,4 +1,7 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Workspace = game:GetService("Workspace")
+
+local PusherMath = require(ReplicatedStorage.Shared.rules.PusherMath)
 
 local MachineBuilder = {}
 
@@ -52,15 +55,18 @@ function MachineBuilder.build(config)
 			folder
 		)
 	end
+	-- The back housing is a solid block from the ground up. It hides the slab's rear when the
+	-- pusher is retracted, so the slab appears to come out of the machine.
+	local housingDepth = config.pusherStroke + 1
 	newPart(
 		"BackWall",
-		Vector3.new(m.platformWidth + 2, m.wallHeight, 1),
-		origin * CFrame.new(0, wallY, -(halfDepth + 0.5)),
+		Vector3.new(m.platformWidth + 2, m.originY + baseTop + m.wallHeight, housingDepth),
+		origin * CFrame.new(0, (baseTop + m.wallHeight - m.originY) / 2, -(halfDepth + housingDepth / 2)),
 		Color3.fromRGB(200, 60, 60),
 		folder
 	)
 
-	local retractCenterZ = -halfDepth + m.pusherDepth / 2
+	local retractCenterZ = PusherMath.retractedCenterZ(m.platformDepth, m.pusherDepth, config.pusherStroke)
 	local pusherY = baseTop + m.pusherHeight / 2
 	local pusher = newPart(
 		"Pusher",
@@ -88,7 +94,7 @@ function MachineBuilder.build(config)
 		Color3.fromRGB(120, 180, 255),
 		folder
 	)
-	dropPlane.Transparency = 0.85
+	dropPlane.Transparency = 1 -- invisible; it only catches click rays
 	dropPlane.CanCollide = false
 	dropPlane.CanTouch = false
 	dropPlane.CanQuery = true

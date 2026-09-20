@@ -7,7 +7,7 @@ local PusherService = {}
 
 function PusherService.start(machine, config)
 	local m = config.machine
-	local retractCenterZ = -m.platformDepth / 2 + m.pusherDepth / 2
+	local retractCenterZ = PusherMath.retractedCenterZ(m.platformDepth, m.pusherDepth, config.pusherStroke)
 	local pusherY = m.baseThickness / 2 + m.pusherHeight / 2
 	local startTime = os.clock()
 
