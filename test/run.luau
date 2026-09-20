@@ -6,6 +6,7 @@ local specs = {
 	{ name = "Cooldown", run = require("./Cooldown.spec") },
 	{ name = "Payout", run = require("./Payout.spec") },
 	{ name = "Regen", run = require("./Regen.spec") },
+	{ name = "SaveData", run = require("./SaveData.spec") },
 }
 
 local t = Harness.new()
