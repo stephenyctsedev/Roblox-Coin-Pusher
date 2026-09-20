@@ -8,6 +8,9 @@ local specs = {
 	{ name = "Regen", run = require("./Regen.spec") },
 	{ name = "SaveData", run = require("./SaveData.spec") },
 	{ name = "ConfigValidation", run = require("./ConfigValidation.spec") },
+	{ name = "DropZone", run = require("./DropZone.spec") },
+	{ name = "PusherMath", run = require("./PusherMath.spec") },
+	{ name = "CapQueue", run = require("./CapQueue.spec") },
 }
 
 local t = Harness.new()
