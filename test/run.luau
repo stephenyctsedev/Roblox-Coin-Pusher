@@ -11,6 +11,7 @@ local specs = {
 	{ name = "DropZone", run = require("./DropZone.spec") },
 	{ name = "PusherMath", run = require("./PusherMath.spec") },
 	{ name = "CapQueue", run = require("./CapQueue.spec") },
+	{ name = "CoinLayout", run = require("./CoinLayout.spec") },
 }
 
 local t = Harness.new()

@@ -25,6 +25,10 @@ local function anyNumber(_: number): boolean
 	return true
 end
 
+local function atLeastOne(value: number): boolean
+	return value >= 1
+end
+
 local function check(
 	errors: { string },
 	tbl: any,
@@ -73,6 +77,9 @@ function ConfigValidation.validate(config: any): (boolean, { string })
 		check(errors, machine, "machine.", "dropHeight", positive, "a positive number")
 		check(errors, machine, "machine.", "dropZ", anyNumber, "a finite number")
 		check(errors, machine, "machine.", "rewardZoneDepth", positive, "a positive number")
+		check(errors, machine, "machine.", "seedStartZ", anyNumber, "a finite number")
+		check(errors, machine, "machine.", "seedEndMargin", nonNegative, "a non-negative number")
+		check(errors, machine, "machine.", "seedGapFactor", atLeastOne, "a number of at least 1")
 
 		-- Cross-field rules only run when every field is individually valid.
 		if #errors == 0 then
@@ -84,6 +91,12 @@ function ConfigValidation.validate(config: any): (boolean, { string })
 			end
 			if math.abs(machine.dropZ) >= machine.platformDepth / 2 then
 				table.insert(errors, "machine.dropZ: must sit inside the platform depth")
+			end
+			if machine.seedStartZ - machine.coinDiameter / 2 < -machine.platformDepth / 2 + machine.pusherDepth then
+				table.insert(errors, "machine.seedStartZ: must sit in front of the retracted pusher")
+			end
+			if machine.seedStartZ >= machine.platformDepth / 2 - machine.seedEndMargin then
+				table.insert(errors, "machine.seedStartZ: must be behind the seed end (platformDepth / 2 - seedEndMargin)")
 			end
 		end
 	end

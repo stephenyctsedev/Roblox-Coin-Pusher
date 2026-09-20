@@ -16,6 +16,10 @@ function RewardService.start(machine, onReward: (ownerUserId: number) -> ())
 		hit:SetAttribute("Paid", true)
 
 		local ownerUserId = hit:GetAttribute("OwnerUserId")
+		if hit:GetAttribute("Seeded") then
+			-- Pre-filled coins have no owner; credit the most recent dropper, if any.
+			ownerUserId = CoinService.lastDropper()
+		end
 		CoinService.remove(hit)
 		if typeof(ownerUserId) == "number" then
 			onReward(ownerUserId)

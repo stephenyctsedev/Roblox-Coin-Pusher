@@ -28,6 +28,7 @@ dropRemote.Parent = ReplicatedStorage
 local machine = MachineBuilder.build(Config)
 PusherService.start(machine, Config)
 CoinService.init(machine, Config)
+Telemetry.log("machine_seeded", { count = CoinService.seed() })
 
 RewardService.start(machine, function(ownerUserId: number)
 	local reward = Payout.forReward(Config)

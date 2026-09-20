@@ -27,6 +27,9 @@ local function validConfig()
 			dropHeight = 8,
 			dropZ = -4.5,
 			rewardZoneDepth = 6,
+			seedStartZ = 1.5,
+			seedEndMargin = 1.5,
+			seedGapFactor = 1.02,
 		},
 	}
 end
@@ -137,5 +140,29 @@ return function(t)
 		local ok, errors = ConfigValidation.validate(config)
 		t:eq(ok, false)
 		t:eq(hasError(errors, "machine.originY"), true)
+	end)
+
+	t:test("ConfigValidation: the seed gap factor must be at least 1", function()
+		local config = validConfig()
+		config.machine.seedGapFactor = 0.9
+		local ok, errors = ConfigValidation.validate(config)
+		t:eq(ok, false)
+		t:eq(hasError(errors, "machine.seedGapFactor"), true)
+	end)
+
+	t:test("ConfigValidation: seeded coins must start in front of the retracted pusher", function()
+		local config = validConfig()
+		config.machine.seedStartZ = -8
+		local ok, errors = ConfigValidation.validate(config)
+		t:eq(ok, false)
+		t:eq(hasError(errors, "machine.seedStartZ"), true)
+	end)
+
+	t:test("ConfigValidation: the seed band must not be empty", function()
+		local config = validConfig()
+		config.machine.seedStartZ = 11
+		local ok, errors = ConfigValidation.validate(config)
+		t:eq(ok, false)
+		t:eq(hasError(errors, "machine.seedStartZ"), true)
 	end)
 end
