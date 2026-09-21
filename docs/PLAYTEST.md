@@ -7,6 +7,14 @@ Run in Roblox Studio with `rojo serve` running and the Rojo plugin connected. Ti
 - [ ] Output shows `[telemetry] {"event":"server_started",...}`.
 - [ ] Output shows `machine_seeded` with a count of 51.
 
+## Bridge and spawn
+- [ ] You spawn on the green pad on the glass bridge in front of the machine, facing the machine.
+- [ ] You are not spawned at the old ground spawn (the Baseplate SpawnLocation is removed).
+- [ ] The camera looks down at the machine. The front rows of coins are not hidden behind the deck edge (if they are, raise `bridge.deckTransparency` toward 0.8 or lower `bridge.deckHeight`).
+- [ ] The ramp at the back of the deck lets you walk down and back up without getting stuck.
+- [ ] The rails stop you falling off the sides and the front; the back opening lines up with the ramp.
+- [ ] Clicking over the machine still drops coins under the cursor while you stand on the bridge.
+
 ## Machine
 - [ ] Base, stand, red walls, red back block, white pusher and faint green reward zone are visible.
 - [ ] The pusher slides forward and back about every 3 seconds, smoothly.

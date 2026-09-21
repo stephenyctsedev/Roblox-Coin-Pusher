@@ -7,6 +7,7 @@ local ConfigValidation = require(Shared.rules.ConfigValidation)
 local Payout = require(Shared.rules.Payout)
 
 local Server = script.Parent
+local BridgeBuilder = require(Server.BridgeBuilder)
 local CoinService = require(Server.CoinService)
 local DataService = require(Server.DataService)
 local DropService = require(Server.DropService)
@@ -26,6 +27,7 @@ dropRemote.Name = "DropCoin"
 dropRemote.Parent = ReplicatedStorage
 
 local machine = MachineBuilder.build(Config)
+BridgeBuilder.build(Config)
 PusherService.start(machine, Config)
 CoinService.init(machine, Config)
 Telemetry.log("machine_seeded", { count = CoinService.seed() })
