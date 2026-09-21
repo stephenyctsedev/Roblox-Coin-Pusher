@@ -28,4 +28,19 @@ return {
 		seedEndMargin = 1.5, -- empty strip left before the front edge
 		seedGapFactor = 1.02, -- spacing between pre-filled coins as a multiple of the coin diameter
 	},
+
+	-- Raised viewing bridge in front of the machine. Players spawn on it and look down at the
+	-- pile. All values are world coordinates in studs.
+	bridge = {
+		centerX = 0,
+		frontZ = -8, -- deck edge nearest the machine; must stay in front of the reward zone
+		deckWidth = 20,
+		deckDepth = 8,
+		deckHeight = 10, -- world Y of the deck top; must clear the machine's side walls
+		deckThickness = 1,
+		deckTransparency = 0.5, -- glass, so the deck does not hide the pile from the camera
+		rampWidth = 8,
+		rampRun = 18, -- how far the walk-up ramp reaches back from the deck
+		railHeight = 3,
+	},
 }

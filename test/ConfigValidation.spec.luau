@@ -31,6 +31,18 @@ local function validConfig()
 			seedEndMargin = 1.5,
 			seedGapFactor = 1.02,
 		},
+		bridge = {
+			centerX = 0,
+			frontZ = -8,
+			deckWidth = 20,
+			deckDepth = 8,
+			deckHeight = 10,
+			deckThickness = 1,
+			deckTransparency = 0.5,
+			rampWidth = 8,
+			rampRun = 18,
+			railHeight = 3,
+		},
 	}
 end
 
@@ -164,5 +176,59 @@ return function(t)
 		local ok, errors = ConfigValidation.validate(config)
 		t:eq(ok, false)
 		t:eq(hasError(errors, "machine.seedStartZ"), true)
+	end)
+
+	t:test("ConfigValidation: a missing bridge table is rejected", function()
+		local config = validConfig()
+		config.bridge = nil
+		local ok, errors = ConfigValidation.validate(config)
+		t:eq(ok, false)
+		t:eq(hasError(errors, "bridge"), true)
+	end)
+
+	t:test("ConfigValidation: bad bridge numbers are named in the errors", function()
+		local config = validConfig()
+		config.bridge.deckWidth = 0
+		config.bridge.rampRun = -1
+		config.bridge.deckTransparency = 1.5
+		config.bridge.frontZ = "-8"
+		local ok, errors = ConfigValidation.validate(config)
+		t:eq(ok, false)
+		t:eq(hasError(errors, "bridge.deckWidth"), true)
+		t:eq(hasError(errors, "bridge.rampRun"), true)
+		t:eq(hasError(errors, "bridge.deckTransparency"), true)
+		t:eq(hasError(errors, "bridge.frontZ"), true)
+	end)
+
+	t:test("ConfigValidation: the deck must be higher than the machine walls", function()
+		local config = validConfig()
+		config.bridge.deckHeight = 7 -- wall top is 3 + 0.5 + 4 = 7.5
+		local ok, errors = ConfigValidation.validate(config)
+		t:eq(ok, false)
+		t:eq(hasError(errors, "bridge.deckHeight"), true)
+	end)
+
+	t:test("ConfigValidation: the deck must be thinner than its height", function()
+		local config = validConfig()
+		config.bridge.deckThickness = 10
+		local ok, errors = ConfigValidation.validate(config)
+		t:eq(ok, false)
+		t:eq(hasError(errors, "bridge.deckThickness"), true)
+	end)
+
+	t:test("ConfigValidation: the bridge must stay in front of the reward zone", function()
+		local config = validConfig()
+		config.bridge.frontZ = -12 -- reward zone ends at -28 + 12 + 6 = -10
+		local ok, errors = ConfigValidation.validate(config)
+		t:eq(ok, false)
+		t:eq(hasError(errors, "bridge.frontZ"), true)
+	end)
+
+	t:test("ConfigValidation: the ramp cannot be wider than the deck", function()
+		local config = validConfig()
+		config.bridge.rampWidth = 25
+		local ok, errors = ConfigValidation.validate(config)
+		t:eq(ok, false)
+		t:eq(hasError(errors, "bridge.rampWidth"), true)
 	end)
 end

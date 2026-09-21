@@ -29,6 +29,10 @@ local function atLeastOne(value: number): boolean
 	return value >= 1
 end
 
+local function fraction(value: number): boolean
+	return value >= 0 and value <= 1
+end
+
 local function check(
 	errors: { string },
 	tbl: any,
@@ -98,6 +102,40 @@ function ConfigValidation.validate(config: any): (boolean, { string })
 			end
 			if machine.seedStartZ >= machine.platformDepth / 2 - machine.seedEndMargin then
 				table.insert(errors, "machine.seedStartZ: must be behind the seed end (platformDepth / 2 - seedEndMargin)")
+			end
+		end
+	end
+
+	local bridge = config.bridge
+	if type(bridge) ~= "table" then
+		table.insert(errors, "bridge: must be a table")
+	else
+		check(errors, bridge, "bridge.", "centerX", anyNumber, "a finite number")
+		check(errors, bridge, "bridge.", "frontZ", anyNumber, "a finite number")
+		check(errors, bridge, "bridge.", "deckWidth", positive, "a positive number")
+		check(errors, bridge, "bridge.", "deckDepth", positive, "a positive number")
+		check(errors, bridge, "bridge.", "deckHeight", positive, "a positive number")
+		check(errors, bridge, "bridge.", "deckThickness", positive, "a positive number")
+		check(errors, bridge, "bridge.", "deckTransparency", fraction, "between 0 and 1")
+		check(errors, bridge, "bridge.", "rampWidth", positive, "a positive number")
+		check(errors, bridge, "bridge.", "rampRun", positive, "a positive number")
+		check(errors, bridge, "bridge.", "railHeight", positive, "a positive number")
+
+		if #errors == 0 then
+			local machine = config.machine
+			local wallTop = machine.originY + machine.baseThickness / 2 + machine.wallHeight
+			if bridge.deckHeight <= wallTop then
+				table.insert(errors, "bridge.deckHeight: must be above the machine wall top (" .. wallTop .. ") so players look down")
+			end
+			if bridge.deckThickness >= bridge.deckHeight then
+				table.insert(errors, "bridge.deckThickness: must be smaller than bridge.deckHeight")
+			end
+			local rewardZoneEndZ = machine.originZ + machine.platformDepth / 2 + machine.rewardZoneDepth
+			if bridge.frontZ < rewardZoneEndZ then
+				table.insert(errors, "bridge.frontZ: must sit in front of the reward zone (at least " .. rewardZoneEndZ .. ")")
+			end
+			if bridge.rampWidth > bridge.deckWidth then
+				table.insert(errors, "bridge.rampWidth: must not be wider than bridge.deckWidth")
 			end
 		end
 	end
