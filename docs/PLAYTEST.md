@@ -1,6 +1,6 @@
 # Playtest checklist
 
-Run in Roblox Studio with `rojo serve` running and the Rojo plugin connected. Tick each item and note what you saw. Open View, Output to read the log lines.
+Run in Roblox Studio with `rojo serve` running and the Rojo plugin connected. Tick each item and note what you saw. Open View, Output to read the log lines. The game prints them from the server, so in the Output window set the context dropdown to Server (or All Contexts) and clear the filter box, otherwise the `[telemetry]` lines are hidden.
 
 ## Setup
 - [ ] Output shows no red errors on Play.
@@ -44,7 +44,7 @@ Run in Roblox Studio with `rojo serve` running and the Rojo plugin connected. Ti
 - [ ] Temporarily set `coinsOnMachineCap` to 60 in Config and drop many coins: the oldest coins vanish. Set it back to 150.
 
 ## Saving
-- [ ] Stop and Play again. Output shows `data_loaded` with status `loaded`, or `datastore_unavailable` (the in-memory fallback in Studio).
+- [ ] Before the place is published, Output shows `datastore_unavailable` ("You must publish this place to the web") then `data_loaded` with status `new`. Coins and score reset on every Play. This is the in-memory fallback working as designed.
 - [ ] With Game Settings, Security, "Enable Studio Access to API Services" on and the place saved to Roblox: coins and score come back after a restart.
 
 ## Two players
