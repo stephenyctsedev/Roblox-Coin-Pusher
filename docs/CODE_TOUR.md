@@ -43,7 +43,34 @@ print(list[4])   -- nil  (past the end)
 print(#list)     -- 3
 ```
 
-A wrong index does not crash by itself. The error comes later, when you use the `nil`. For example, `list[0] + 1` fails with "attempt to perform arithmetic on a nil value". You can store a value at key 0 (`list[0] = 99`), but `#list` and `for _, item in list do` ignore it.
+A wrong index does not crash by itself. The error comes later, when you use the `nil`. For example, `list[0] + 1` fails with "attempt to perform arithmetic on a nil value".
+
+You can store a value at key 0, but it is not a list position, so the length ignores it:
+
+```lua
+local list = { 10, 20, 30 }
+list[0] = 5
+print(#list)     -- 3   (# counts positions 1, 2, 3 only)
+print(list[0])   -- 5   (the value is stored, you can read it back)
+```
+
+Loops behave differently (tested in Lune 0.10.5):
+
+```lua
+for k, v in list do ... end          -- visits 1=10, 2=20, 3=30, and also 0=5
+for i, v in ipairs(list) do ... end  -- visits 1=10, 2=20, 3=30 only
+```
+
+Use `ipairs` when you mean "the list positions in order". A plain `for ... in list` also visits other keys, such as key 0.
+
+To add to the end of a list, use `table.insert`:
+
+```lua
+table.insert(list, 7)   -- adds 7 at position 4
+print(#list)            -- 4
+```
+
+Be careful with `table.insert(list, 0, 7)`: it does not add to the list. It does not raise an error either. It silently stores 7 at key 0, and `#list` stays the same. Silent surprises like this are why you test small examples in Lune before you trust them.
 
 Three more ideas you will see everywhere:
 
