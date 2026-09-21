@@ -2,7 +2,7 @@
 
 A small Roblox coin pusher. The machine starts full of coins. Drop more coins, a pusher slab shoves the pile toward the edge, and coins that fall into the reward zone pay a bonus. Progress is saved per player.
 
-Built with Claude Code assistance. Game rules are plain Luau modules with automated tests; the Roblox-facing parts are checked with a manual playtest checklist.
+Claude Code generated all of the code. The owner chose the features, playtested in Roblox Studio and published the game, and is studying the code with `docs/CODE_TOUR.md`. Game rules are plain Luau modules with automated tests; the Roblox-facing parts are checked with a manual playtest checklist.
 
 Play: https://www.roblox.com/games/72818876701014/Coin-Pusher
 
