@@ -4,7 +4,7 @@ A small Roblox coin pusher. The machine starts full of coins. Drop more coins, a
 
 Built with Claude Code assistance. Game rules are plain Luau modules with automated tests; the Roblox-facing parts are checked with a manual playtest checklist.
 
-Play: (add the published link here after publishing)
+Play: https://www.roblox.com/games/72818876701014/Coin-Pusher
 
 ## How it works
 
